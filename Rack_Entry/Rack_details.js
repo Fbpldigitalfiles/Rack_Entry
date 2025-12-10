@@ -682,7 +682,10 @@ console.log("are rows valid",areRowsValid);
     })
       .then((response) => response.json())
       .then((responseData) => {
-        console.log('responseData', responseData.data)
+        console.log('responseData ', responseData)
+        if(responseData.error){
+          throw new Error("Error in the response");
+        }
         setinward_data(responseData.data)
         const lettersData = []
         const numbersData = []
@@ -705,6 +708,11 @@ console.log("are rows valid",areRowsValid);
         setload(false)
         // setmaterialname(fmaterial_list)
         // console.log('fmaterial_list',fmaterial_list)
+
+      }).catch((error) =>{
+        console.log("error",error)
+        setinward_data([])
+        setload(false)
 
       })
 
@@ -1161,7 +1169,7 @@ if (currentKeyParamForLetter) {
             </View>
           </View>
           <View style={{ flex: 0.1, marginLeft: 20, }}>
-            {inward_data.length != 0 && (
+            {inward_data && inward_data.length != 0 && (
               <View style={{ width: '120%', marginTop: 30, zIndex: 0, marginBottom: 0 }}>
 
                 <TouchableOpacity

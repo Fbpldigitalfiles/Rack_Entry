@@ -1,34 +1,22 @@
-import React, {useLayoutEffect,useEffect, useRef,useState } from "react"
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
-  AppState ,
-  SafeAreaView,
+  ActivityIndicator,
+  Alert,
+  Modal,
   ScrollView,
-  StatusBar,
   StyleSheet,
   Text,
-  useColorScheme,
-  View,
-  
-  Alert,
-  Colors,
-  Image,
-  KeyboardAvoidingView ,
   TouchableOpacity,
-  Modal,
-  FlatList,
-  TouchableWithoutFeedback,Keyboard,Dimensions,Picker,ActivityIndicator
-  
-} from "react-native"
+  View
+} from "react-native";
 
 
-  import { Appbar, FAB, useTheme, TextInput, RadioButton,Provider ,DefaultTheme,Menu, Divider,Snackbar,Button  } from 'react-native-paper';
+  import { Appbar, Button } from 'react-native-paper';
   // import { Dropdown } from 'react-native-element-dropdown';
-  import { URL } from './constants';
-  import AsyncStorage from '@react-native-async-storage/async-storage';
-  import { useNavigation,useRoute  } from '@react-navigation/native';
   import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-  import DropDownPicker from 'react-native-dropdown-picker';
-  import { SelectList } from 'react-native-select-list';
+import { useRoute } from '@react-navigation/native';
+import DropDownPicker from 'react-native-dropdown-picker';
+import { URL } from './constants';
   function Lots({ navigation }) {
 
     // const [open, setOpen] = useState(false);
@@ -411,10 +399,11 @@ const proceed = (id, tc, invoice, coils, weight, s_name,tc_date)=>{
       <View style={{flex: 0.6,flexDirection: 'row', marginLeft:10, borderStyle:'solid', borderWidth:1,borderRadius:5,}}>
     <View style={{marginLeft:20}}><Text style={{fontSize:20, color:'black', marginTop:20, marginLeft:10, paddingTop:1}}>Material Name</Text></View>
     
-      <View style={styles.container}>
+      <View style={[styles.container,styles.wrapper,{ maxHeight: 250,zIndex: 1000, elevation: 1000}]}>
       <DropDownPicker
           open={open1}
           value={value1}
+          listMode="MODAL"
           items={materialname!= null ?materialname:[]}
           setOpen={setOpen1}
           setValue={setValue1}
@@ -426,9 +415,29 @@ const proceed = (id, tc, invoice, coils, weight, s_name,tc_date)=>{
           dropDownContainerStyle={styles.dropDownContainer}
           autoFocus={false}
         itemStyle={styles.item}
+        flatListProps={{
+    numColumns: 3,   // <--- THIS MAKES GRID
+    columnWrapperStyle: {
+      justifyContent: 'space-between',
+    },
+    showsVerticalScrollIndicator: true,
+  }}
         listItemLabelStyle={styles.listItemLabel}
         listItemContainerStyle={styles.listItemContainer}
         placeholderStyle={styles.placeholder}
+        modalProps={{
+    animationType: "fade",
+    transparent: true,  // allows custom size & background
+  }}
+  modalContentContainerStyle={{
+    width: '95%',          // reduce width
+    maxHeight: 600,        // reduce height
+    alignSelf: 'center',
+    backgroundColor: 'white',
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal:5
+  }}
         searchTextInputProps={{
           ref: searchInputRef,
           keyboardType: 'numeric',
@@ -669,11 +678,23 @@ const proceed = (id, tc, invoice, coils, weight, s_name,tc_date)=>{
       alignItems: 'center',
       padding: 16,
       // height:200
-    },
+    },wrapper: {
+    // ensure this wrapper is above other siblings when open
+    zIndex: 1000,
+    ...Platform.select({
+      android: { elevation: 1000 },
+    }),
+  },
+
     dropDownContainer: {
       backgroundColor: '#fafafa',
       maxHeight:500,
-      zIndex:999
+      zIndex:999,
+      display:'flex',
+      flexDirection:'row',
+      flexDirection: 'row',
+    flexWrap: 'wrap',
+    
       // height:200
     },
     item: {
@@ -694,8 +715,11 @@ const proceed = (id, tc, invoice, coils, weight, s_name,tc_date)=>{
       marginVertical: 5, // Adjust vertical margin to control spacing between borders
       paddingHorizontal: 20,
       paddingVertical:5 ,
-      height:70,
+      width:'32%',
+      height:'auto',
       zIndex:999// Optionally, add horizontal padding
+      
+      
     },
     placeholder: {
       paddingTop:8,
